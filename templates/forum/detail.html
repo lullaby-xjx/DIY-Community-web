@@ -1,0 +1,44 @@
+{% extends 'base.html' %}
+{% block title %}{{ topic.title }}{% endblock %}
+{% block content %}
+<section class="section">
+  <div class="container" style="max-width:860px">
+    <div class="breadcrumb" style="margin-bottom:1rem">
+      <a href="{% url 'home' %}">首页</a> &rsaquo; <a href="{% url 'forum_list' %}">论坛</a>
+    </div>
+    <div class="info-card">
+      <h2 style="margin-bottom:.4rem">{{ topic.title }}</h2>
+      <div class="card-meta">
+        <span><i class="bi bi-person"></i> {{ topic.author.first_name|default:topic.author.username }}</span>
+        <span><i class="bi bi-clock"></i> {{ topic.create_time|date:"Y-m-d H:i" }}</span>
+        <span><i class="bi bi-eye"></i> {{ topic.views }}</span>
+      </div>
+      <div class="content-body" style="padding:1.2rem 0 0">{{ topic.content|linebreaks }}</div>
+    </div>
+
+    <div class="comment-box info-card" style="margin-top:1.6rem">
+      <h3 style="margin-bottom:1rem">回复 ({{ replies|length }})</h3>
+      {% if user.is_authenticated %}
+      <form method="post" action="{% url 'forum_reply' topic.pk %}" style="margin-bottom:1.4rem">
+        {% csrf_token %}
+        <textarea name="content" placeholder="写下你的回复..." required></textarea>
+        <button class="btn btn-primary" type="submit" style="margin-top:.6rem">回复</button>
+      </form>
+      {% else %}
+      <p><a href="{% url 'login' %}">登录</a>后可参与回复</p>
+      {% endif %}
+      {% for r in replies %}
+      <div class="comment-item">
+        <div class="comment-avatar {% if not r.author.first_name %}none{% endif %}">{{ r.author.first_name|slice:":1"|default:"匿" }}</div>
+        <div style="flex:1">
+          <div class="comment-head"><b>{{ r.author.first_name|default:r.author.username }}</b><time>{{ r.create_time|date:"Y-m-d H:i" }}</time></div>
+          <div class="comment-body">{{ r.content|linebreaks }}</div>
+        </div>
+      </div>
+      {% empty %}
+      <p style="color:var(--muted)">暂无回复</p>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+{% endblock %}

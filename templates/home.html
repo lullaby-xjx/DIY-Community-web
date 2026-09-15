@@ -1,0 +1,98 @@
+{% extends 'base.html' %}
+{% block title %}手工DIY社区 - 分享手工创意{% endblock %}
+{% block content %}
+<header class="hero">
+  <div class="container">
+    <h1>发现灵感，分享你的手工创意</h1>
+    <p>在这里，你可以发布自己的 DIY 作品、浏览达人的创意、在论坛里交流心得。从旧物改造到手工编织，让生活更有温度。</p>
+    <div class="hero-actions">
+      {% if user.is_authenticated %}
+      <a href="{% url 'work_create' %}" class="btn btn-primary"><i class="bi bi-plus-lg"></i> 发布作品</a>
+      {% else %}
+      <a href="{% url 'register' %}" class="btn btn-primary"><i class="bi bi-person-plus"></i> 立即加入</a>
+      {% endif %}
+      <a href="{% url 'work_list' %}" class="btn btn-outline">浏览作品</a>
+    </div>
+  </div>
+</header>
+
+<section class="section">
+  <div class="container">
+    <div class="section-head">
+      <h2>最新作品</h2>
+      <a href="{% url 'work_list' %}" class="more">查看全部 &rarr;</a>
+    </div>
+    <div class="grid">
+      {% for w in works %}
+      <a href="{% url 'work_detail' w.pk %}" class="card">
+        <div class="card-cover">
+          {% if w.cover %}<img src="{{ w.cover.url }}" alt="{{ w.title }}">{% else %}<i class="bi bi-palette"></i>{% endif %}
+          {% if w.is_video %}<span class="video-badge"><i class="bi bi-play-fill"></i></span>{% endif %}
+        </div>
+        <div class="card-body">
+          <div><span class="tag">{{ w.category.name }}</span></div>
+          <div class="card-title">{{ w.title }}</div>
+          <div class="card-meta">
+            <span><i class="bi bi-eye"></i> {{ w.views }}</span>
+            <span><i class="bi bi-hand-thumbs-up"></i> {{ w.likes }}</span>
+            <span><i class="bi bi-clock"></i> {{ w.create_time|date:"m-d" }}</span>
+          </div>
+        </div>
+      </a>
+      {% empty %}
+      <p>暂无作品，快来发布第一篇吧！</p>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+<section class="section" style="padding-top:8px">
+  <div class="container">
+    <div class="section-head">
+      <h2>热门推荐</h2>
+      <a href="{% url 'work_list' %}" class="more">查看更多 &rarr;</a>
+    </div>
+    <div class="grid">
+      {% for w in hot_works %}
+      <a href="{% url 'work_detail' w.pk %}" class="card">
+        <div class="card-cover">
+          {% if w.cover %}<img src="{{ w.cover.url }}" alt="{{ w.title }}">{% else %}<i class="bi bi-fire"></i>{% endif %}
+          {% if w.is_video %}<span class="video-badge"><i class="bi bi-play-fill"></i></span>{% endif %}
+        </div>
+        <div class="card-body">
+          <div class="card-title">{{ w.title }}</div>
+          <div class="card-meta">
+            <span><i class="bi bi-eye"></i> {{ w.views }}</span>
+            <span><i class="bi bi-hand-thumbs-up"></i> {{ w.likes }}</span>
+          </div>
+        </div>
+      </a>
+      {% empty %}
+      <p>暂无热门作品</p>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+{% if news %}
+<section class="section">
+  <div class="container">
+    <div class="section-head">
+      <h2>社区公告</h2>
+      <a href="{% url 'announcement_list' %}" class="more">全部公告 &rarr;</a>
+    </div>
+    <div class="grid">
+      {% for n in news %}
+      <a href="{% url 'announcement_detail' n.pk %}" class="card" style="flex-direction:row;align-items:center;padding:1rem 1.2rem;gap:1rem">
+        <i class="bi bi-megaphone" style="font-size:1.8rem;color:var(--primary)"></i>
+        <div>
+          <div class="card-title">{{ n.title }}</div>
+          <div class="card-meta">{{ n.create_time|date:"Y-m-d" }}</div>
+        </div>
+      </a>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+{% endif %}
+{% endblock %}

@@ -1,0 +1,90 @@
+{% extends 'base.html' %}
+{% block title %}编辑 {{ conf.label }}{% endblock %}
+{% block content %}
+<div class="admin-layout">
+  <aside class="admin-side">
+    <a href="{% url 'admin_dashboard' %}" class="brand"><i class="bi bi-tools"></i> 管理后台</a>
+    <a href="{% url 'admin_dashboard' %}"><i class="bi bi-speedometer2"></i> 仪表盘</a>
+    <a href="{% url 'admin_list' 'work' %}"><i class="bi bi-collection"></i> 作品管理</a>
+    <a href="{% url 'admin_list' 'category' %}"><i class="bi bi-tags"></i> 分类管理</a>
+    <a href="{% url 'admin_list' 'announcement' %}"><i class="bi bi-megaphone"></i> 公告管理</a>
+    <a href="{% url 'admin_list' 'user' %}"><i class="bi bi-people"></i> 用户管理</a>
+    <a href="{% url 'admin_list' 'comment' %}"><i class="bi bi-chat-square-text"></i> 评论管理</a>
+    <a href="{% url 'admin_list' 'forum' %}"><i class="bi bi-chat-dots"></i> 论坛管理</a>
+    <a href="{% url 'logout' %}" style="margin-top:auto;border-top:1px solid var(--border);border-radius:0"><i class="bi bi-box-arrow-left"></i> 退出登录</a>
+  </aside>
+  <main class="admin-main">
+    <a href="{% url 'admin_list' table %}" style="color:var(--muted);font-size:.9rem">&larr; 返回列表</a>
+    <h2 style="margin:1rem 0 1.2rem">{{ conf.label }} - {{ obj|default:"新增" }}</h2>
+    <div class="form-card" style="max-width:640px;margin:0">
+      <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        {% if table == 'work' %}
+          <label>标题</label>
+          <input type="text" name="title" value="{{ obj.title|default:'' }}">
+          <label>分类</label>
+          <select name="category">
+            {% for c in categories %}
+            <option value="{{ c.pk }}" {% if obj and obj.category_id == c.pk %}selected{% endif %}>{{ c.name }}</option>
+            {% endfor %}
+          </select>
+          <label>作品类型</label>
+          <select name="work_type">
+            <option value="article" {% if obj and obj.work_type == 'article' %}selected{% endif %}>图文</option>
+            <option value="video" {% if obj and obj.work_type == 'video' %}selected{% endif %}>视频</option>
+          </select>
+          <label>简介</label>
+          <input type="text" name="summary" value="{{ obj.summary|default:'' }}">
+          <label>封面图{% if obj.cover %}（当前已上传，重新选择将覆盖）{% endif %}</label>
+          <input type="file" name="cover" accept="image/*">
+          <label>视频文件{% if obj.video %}（当前已上传，重新选择将覆盖）{% endif %}</label>
+          <input type="file" name="video" accept="video/*">
+          <label>正文</label>
+          <textarea name="content" style="min-height:180px">{{ obj.content|default:'' }}</textarea>
+          <label>浏览数</label>
+          <input type="number" name="views" value="{{ obj.views|default:0 }}">
+          <label>点赞数</label>
+          <input type="number" name="likes" value="{{ obj.likes|default:0 }}">
+          <label><input type="checkbox" name="status" {% if obj.status == 1 or not obj %}checked{% endif %}> 发布状态</label>
+        {% elif table == 'category' %}
+          <label>分类名称</label>
+          <input type="text" name="name" value="{{ obj.name|default:'' }}" required>
+          <label>排序（数字越小越靠前）</label>
+          <input type="number" name="sort" value="{{ obj.sort|default:0 }}">
+        {% elif table == 'announcement' %}
+          <label>标题</label>
+          <input type="text" name="title" value="{{ obj.title|default:'' }}" required>
+          <label>内容</label>
+          <textarea name="content" style="min-height:160px">{{ obj.content|default:'' }}</textarea>
+        {% elif table == 'user' %}
+          <label>用户名（不可修改）</label>
+          <input type="text" value="{{ obj.username|default:'' }}" disabled>
+          <label>昵称</label>
+          <input type="text" name="first_name" value="{{ obj.first_name|default:'' }}">
+          <label>邮箱</label>
+          <input type="text" name="email" value="{{ obj.email|default:'' }}">
+          <label><input type="checkbox" name="is_active" {% if obj.is_active %}checked{% endif %}> 启用状态</label>
+        {% elif table == 'comment' %}
+          <label>作品</label>
+          <input type="text" value="{{ obj.work.title|default:'' }}" disabled>
+          <label>评论人</label>
+          <input type="text" value="{{ obj.user.first_name|default:obj.user.username|default:'' }}" disabled>
+          <label>评论内容</label>
+          <textarea name="content" style="min-height:120px">{{ obj.content|default:'' }}</textarea>
+          <label>管理员回复</label>
+          <textarea name="reply" style="min-height:90px">{{ obj.reply|default:'' }}</textarea>
+        {% elif table == 'forum' %}
+          <label>标题</label>
+          <input type="text" name="title" value="{{ obj.title|default:'' }}" required>
+          <label>内容</label>
+          <textarea name="content" style="min-height:160px">{{ obj.content|default:'' }}</textarea>
+          <label>浏览数</label>
+          <input type="number" name="views" value="{{ obj.views|default:0 }}">
+          <label><input type="checkbox" name="status" {% if obj.status == 1 or not obj %}checked{% endif %}> 正常状态</label>
+        {% endif %}
+        <button class="btn btn-primary" type="submit" style="width:100%;justify-content:center;margin-top:1.2rem"><i class="bi bi-check2"></i> 保存</button>
+      </form>
+    </div>
+  </main>
+</div>
+{% endblock %}

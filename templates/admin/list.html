@@ -1,0 +1,57 @@
+{% extends 'base.html' %}
+{% load field_tags %}
+{% block title %}{{ conf.label }}{% endblock %}
+{% block content %}
+<div class="admin-layout">
+  <aside class="admin-side">
+    <a href="{% url 'admin_dashboard' %}" class="brand"><i class="bi bi-tools"></i> 管理后台</a>
+    <a href="{% url 'admin_dashboard' %}"><i class="bi bi-speedometer2"></i> 仪表盘</a>
+    <a href="{% url 'admin_list' 'work' %}"><i class="bi bi-collection"></i> 作品管理</a>
+    <a href="{% url 'admin_list' 'category' %}"><i class="bi bi-tags"></i> 分类管理</a>
+    <a href="{% url 'admin_list' 'announcement' %}"><i class="bi bi-megaphone"></i> 公告管理</a>
+    <a href="{% url 'admin_list' 'user' %}"><i class="bi bi-people"></i> 用户管理</a>
+    <a href="{% url 'admin_list' 'comment' %}"><i class="bi bi-chat-square-text"></i> 评论管理</a>
+    <a href="{% url 'admin_list' 'forum' %}"><i class="bi bi-chat-dots"></i> 论坛管理</a>
+    <a href="{% url 'logout' %}" style="margin-top:auto;border-top:1px solid var(--border);border-radius:0"><i class="bi bi-box-arrow-left"></i> 退出登录</a>
+  </aside>
+  <main class="admin-main">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1.2rem">
+      <h2>{{ conf.label }}</h2>
+      <a href="{% url 'admin_new' table %}" class="btn btn-primary"><i class="bi bi-plus-lg"></i> 新增</a>
+    </div>
+    <table class="admin-table">
+      <thead><tr>
+        {% for f in conf.fields %}<th>{{ f }}</th>{% endfor %}
+        <th>操作</th>
+      </tr></thead>
+      <tbody>
+        {% for o in objects %}
+        <tr>
+          {% for f in conf.fields %}
+            <td>
+              {% if f == 'category' and o.category %}{{ o.category.name }}
+              {% elif f == 'author' and o.author %}{{ o.author.first_name|default:o.author.username }}
+              {% elif f == 'work' and o.work %}{{ o.work.title }}
+              {% elif f == 'user' and o.user %}{{ o.user.first_name|default:o.user.username }}
+              {% elif f == 'topic' and o.topic %}{{ o.topic.title }}
+              {% elif f == 'status' %}{% if o.status == 1 %}发布{% else %}下架{% endif %}
+              {% elif f == 'is_active' %}{{ o.is_active|yesno:"启用,禁用" }}
+              {% elif f == 'is_staff' %}{{ o.is_staff|yesno:"是,否" }}
+              {% else %}{% if f == 'content' or f == 'reply' %}{{ o|getattr:f|truncatewords:12 }}{% else %}{{ o|getattr:f }}{% endif %}{% endif %}
+            </td>
+          {% endfor %}
+          <td>
+            <div class="row-actions">
+              <a href="{% url 'admin_edit' table o.pk %}" class="btn btn-sm">编辑</a>
+              <a href="{% url 'admin_delete' table o.pk %}" class="btn btn-sm" onclick="return confirm('确认删除？')" style="color:#dc2626">删除</a>
+            </div>
+          </td>
+        </tr>
+        {% empty %}
+        <tr><td colspan="10" style="text-align:center;color:var(--muted);padding:2rem">暂无数据</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </main>
+</div>
+{% endblock %}

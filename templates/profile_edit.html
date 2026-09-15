@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+{% block title %}编辑资料{% endblock %}
+{% block content %}
+<section class="section">
+  <div class="container">
+    <div class="form-card">
+      <h2 style="text-align:center;margin-bottom:1.2rem">编辑个人资料</h2>
+      <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        <label>昵称</label>
+        <input type="text" name="nickname" value="{{ user.first_name }}">
+        <label>手机号</label>
+        <input type="text" name="phone" value="{{ profile.phone }}">
+        <label>电子邮箱</label>
+        <input type="text" name="email" value="{{ user.email }}">
+        <label>个人简介</label>
+        <textarea name="bio" style="min-height:90px">{{ profile.bio }}</textarea>
+        <label>头像</label>
+        <input type="file" name="avatar" accept="image/*">
+        <button class="btn btn-primary" type="submit" style="width:100%;justify-content:center;margin-top:1rem"><i class="bi bi-check2"></i> 保存</button>
+      </form>
+    </div>
+  </div>
+</section>
+{% endblock %}

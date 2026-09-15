@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+{% block title %}社区公告{% endblock %}
+{% block content %}
+<header class="page-header">
+  <div class="container">
+    <h1>社区公告</h1>
+    <div class="breadcrumb">了解社区最新动态</div>
+  </div>
+</header>
+<section class="section" style="padding-top:8px">
+  <div class="container" style="max-width:760px">
+    {% for n in news %}
+    <a href="{% url 'announcement_detail' n.pk %}" class="card" style="flex-direction:row;align-items:center;padding:1.2rem 1.4rem;gap:1rem;margin-bottom:1rem">
+      <i class="bi bi-megaphone" style="font-size:1.8rem;color:var(--primary)"></i>
+      <div style="flex:1">
+        <div class="card-title">{{ n.title }}</div>
+        <div class="card-meta" style="padding-top:.3rem">{{ n.create_time|date:"Y-m-d" }}</div>
+      </div>
+      <i class="bi bi-chevron-right" style="color:var(--muted)"></i>
+    </a>
+    {% empty %}
+    <p style="text-align:center;color:var(--muted);padding:3rem 0">暂无公告</p>
+    {% endfor %}
+  </div>
+</section>
+{% endblock %}

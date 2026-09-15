@@ -1,0 +1,19 @@
+{% extends 'base.html' %}
+{% block title %}发布帖子{% endblock %}
+{% block content %}
+<section class="section">
+  <div class="container">
+    <div class="form-card">
+      <h2 style="text-align:center;margin-bottom:1.2rem">发布新帖</h2>
+      <form method="post">
+        {% csrf_token %}
+        <label>帖子标题</label>
+        <input type="text" name="title" required placeholder="一句话概括主题">
+        <label>帖子内容</label>
+        <textarea name="content" required placeholder="详细描述你的问题或分享"></textarea>
+        <button class="btn btn-primary" type="submit" style="width:100%;justify-content:center;margin-top:1rem"><i class="bi bi-send"></i> 发布</button>
+      </form>
+    </div>
+  </div>
+</section>
+{% endblock %}
